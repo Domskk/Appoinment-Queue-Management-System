@@ -1,0 +1,5 @@
+.my-queue {
+  height: 100%;
+  overflow-y: auto;
+  background-color: var(--light-gray);
+}

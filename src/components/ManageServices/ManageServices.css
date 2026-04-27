@@ -1,0 +1,159 @@
+.manage-services {
+  padding: 24px;
+}
+
+.manage-services-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.manage-services-header h2 {
+  margin: 0;
+  color: #2C3E50;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.btn-add-service {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add-service:hover {
+  background-color: #357ABD;
+}
+
+.btn-toggle-expand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  transition: transform 0.2s ease;
+  margin-left: 8px;
+}
+
+.btn-toggle-expand:hover {
+  transform: scale(1.1);
+}
+
+.services-table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.services-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.services-table thead {
+  background-color: #F5F7FA;
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.services-table th {
+  padding: 16px;
+  text-align: left;
+  color: #2C3E50;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.services-table td {
+  padding: 16px;
+  border-bottom: 1px solid #E1E8ED;
+  font-size: 14px;
+}
+
+.services-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.services-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.status-active {
+  background-color: #D4EDDA;
+  color: #155724;
+}
+
+.status-badge.status-inactive {
+  background-color: #F8D7DA;
+  color: #721C24;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 9px 8px;
+  transition: transform 0.2s ease;
+}
+
+.btn-action:hover {
+  transform: scale(1.2);
+}
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .manage-services {
+    padding: 16px;
+  }
+
+  .manage-services-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .services-table {
+    font-size: 12px;
+  }
+
+  .services-table th,
+  .services-table td {
+    padding: 12px 8px;
+  }
+
+  .actions-cell {
+    gap: 4px;
+  }
+
+  .btn-action {
+    font-size: 14px;
+    padding: 2px 4px;
+  }
+}

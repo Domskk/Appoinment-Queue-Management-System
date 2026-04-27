@@ -1,0 +1,5 @@
+.services-page {
+  height: 100%;
+  overflow-y: auto;
+  background-color: var(--light-gray);
+}

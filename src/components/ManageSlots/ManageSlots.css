@@ -1,0 +1,261 @@
+.manage-slots {
+  padding: 24px;
+}
+
+.manage-slots-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.manage-slots-header h2 {
+  margin: 0;
+  color: #2C3E50;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.btn-add-slot {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add-slot:hover {
+  background-color: #357ABD;
+}
+
+.slots-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+/* Calendar Styles */
+.calendar-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #2C3E50;
+  transition: color 0.2s ease;
+}
+
+.calendar-header button:hover {
+  color: #4A90E2;
+}
+
+.calendar-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #2C3E50;
+  font-weight: 600;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.weekday {
+  font-weight: 600;
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #2C3E50;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.calendar-day:not(.empty):hover {
+  background-color: #F0F7FF;
+  border-color: #4A90E2;
+}
+
+.calendar-day.selected {
+  background-color: #2C3E50;
+  color: white;
+  font-weight: 600;
+}
+
+.calendar-day.empty {
+  color: #E1E8ED;
+  cursor: default;
+}
+
+/* Slots Table Styles */
+.slots-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.slots-header {
+  padding: 20px;
+  border-bottom: 1px solid #E1E8ED;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slots-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slots-info label {
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.date-display {
+  color: #2C3E50;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.slots-table-container {
+  overflow-x: auto;
+}
+
+.slots-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.slots-table thead {
+  background-color: #F5F7FA;
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.slots-table th {
+  padding: 16px;
+  text-align: left;
+  color: #2C3E50;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.slots-table td {
+  padding: 16px;
+  border-bottom: 1px solid #E1E8ED;
+  font-size: 14px;
+  color: #2C3E50;
+}
+
+.slots-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.slots-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.booked-cell {
+  color: #4A90E2;
+  font-weight: 600;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-delete-slot {
+  background-color: #FFE8E8;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn-delete-slot:hover {
+  transform: scale(1.2);
+}
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #d5cdcd;
+}
+
+@media (max-width: 1024px) {
+  .slots-container {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-section {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+  }
+
+  .calendar-header {
+    grid-column: 1 / -1;
+  }
+
+  .calendar-grid {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .manage-slots {
+    padding: 16px;
+  }
+
+  .slots-container {
+    gap: 16px;
+  }
+
+  .slots-table {
+    font-size: 12px;
+  }
+
+  .slots-table th,
+  .slots-table td {
+    padding: 12px 8px;
+  }
+}

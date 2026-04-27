@@ -1,0 +1,106 @@
+.current-queue {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.current-queue h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.queue-item {
+  margin-bottom: 25px;
+}
+
+.queue-status-label {
+  font-size: 13px;
+  color: var(--dark-gray);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.progress-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: var(--light-gray);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 70%;
+  background-color: var(--success-green);
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 13px;
+  color: var(--success-green);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.queue-service {
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid var(--primary-blue);
+}
+
+.service-label {
+  font-size: 12px;
+  color: var(--dark-gray);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.service-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.service-time {
+  font-size: 13px;
+  color: var(--dark-gray);
+  margin-bottom: 12px;
+}
+
+.view-details-btn {
+  background-color: white;
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.view-details-btn:hover {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .progress-container {
+    flex-direction: column;
+  }
+
+  .progress-text {
+    width: 100%;
+  }
+}
