@@ -13,7 +13,7 @@ function AppointmentOverview({ upcoming, completed, queuePosition }: Appointment
       <div className="overview-card">
         <div className="card-header">
           <span>Upcoming</span>
-          <FaCalendarAlt className="card-icon" />
+          <FaCalendarAlt className="card-icon" style={{ color: '#2f6f73' }} />
         </div>
         <div className="card-value">{upcoming}</div>
       </div>
@@ -21,7 +21,7 @@ function AppointmentOverview({ upcoming, completed, queuePosition }: Appointment
       <div className="overview-card">
         <div className="card-header">
           <span>Completed</span>
-          <FaCheckCircle className="card-icon" />
+          <FaCheckCircle className="card-icon" style={{ color: '#2f6f73' }}/>
         </div>
         <div className="card-value">{completed}</div>
       </div>
@@ -29,7 +29,7 @@ function AppointmentOverview({ upcoming, completed, queuePosition }: Appointment
       <div className="overview-card">
         <div className="card-header">
           <span>Queue Position</span>
-          <FaUsers className="card-icon" />
+          <FaUsers className="card-icon" style={{ color: '#2f6f73' }}/>
         </div>
         <div className="card-value">{queuePosition}</div>
       </div>

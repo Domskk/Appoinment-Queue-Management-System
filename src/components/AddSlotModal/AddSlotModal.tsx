@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import './AddSlotModal.css'
+import { Service } from '../../contexts/ServicesContext'
 
 interface AddSlotModalProps {
   onClose: () => void
-  onAddSlot: (slot: { time: string; service: string; capacity: number }) => void
+  onAddSlot: (slot: { time: string; serviceId: number; serviceName: string; capacity: number; date: string }) => void
   selectedDate: Date
+  services: Service[]
 }
 
-function AddSlotModal({ onClose, onAddSlot, selectedDate }: AddSlotModalProps) {
+function AddSlotModal({ onClose, onAddSlot, selectedDate, services }: AddSlotModalProps) {
   const [formData, setFormData] = useState({
-    service: '',
+    serviceId: services.length > 0 ? services[0].id : 0,
     date: selectedDate,
     time: '09:00 AM',
     capacity: 50,
@@ -24,17 +26,11 @@ function AddSlotModal({ onClose, onAddSlot, selectedDate }: AddSlotModalProps) {
     '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM'
   ]
 
-  const services = [
-    'General Consultation',
-    'Dental Cleaning',
-    'Eye Exam',
-  ]
-
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'capacity' ? parseInt(value) : value,
+      [name]: name === 'capacity' ? parseInt(value) : name === 'serviceId' ? parseInt(value) : value,
     }))
   }
 
@@ -54,14 +50,17 @@ function AddSlotModal({ onClose, onAddSlot, selectedDate }: AddSlotModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.service) {
+    const selectedService = services.find(s => s.id === formData.serviceId)
+    if (selectedService) {
       onAddSlot({
-        service: formData.service,
+        serviceId: formData.serviceId,
+        serviceName: selectedService.name,
         time: formData.time,
         capacity: formData.capacity,
+        date: formData.date.toISOString().split('T')[0],
       })
       setFormData({
-        service: '',
+        serviceId: services.length > 0 ? services[0].id : 0,
         date: selectedDate,
         time: '09:00 AM',
         capacity: 50,
@@ -99,17 +98,17 @@ function AddSlotModal({ onClose, onAddSlot, selectedDate }: AddSlotModalProps) {
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="service">Service *</label>
+            <label htmlFor="serviceId">Service *</label>
             <select
-              id="service"
-              name="service"
-              value={formData.service}
+              id="serviceId"
+              name="serviceId"
+              value={formData.serviceId}
               onChange={handleChange}
               required
             >
               <option value="">Select service</option>
               {services.map(service => (
-                <option key={service} value={service}>{service}</option>
+                <option key={service.id} value={service.id}>{service.name}</option>
               ))}
             </select>
           </div>

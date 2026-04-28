@@ -209,6 +209,14 @@
   opacity: 1;
 }
 
+.no-slots-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--dark-gray);
+  font-size: 14px;
+}
+
 .continue-btn {
   background-color: var(--primary-blue);
   color: white;

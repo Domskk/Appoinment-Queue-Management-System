@@ -17,7 +17,7 @@
 }
 
 .btn-add-slot {
-  background-color: #4A90E2;
+  background-color: #3f8f95;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -29,7 +29,7 @@
 }
 
 .btn-add-slot:hover {
-  background-color: #357ABD;
+  background-color: #3f8f95;
 }
 
 .slots-container {
@@ -65,7 +65,7 @@
 }
 
 .calendar-header button:hover {
-  color: #4A90E2;
+  color: #3f8f95;
 }
 
 .calendar-header h3 {
@@ -105,11 +105,11 @@
 
 .calendar-day:not(.empty):hover {
   background-color: #F0F7FF;
-  border-color: #4A90E2;
+  border-color: #3f8f95;
 }
 
 .calendar-day.selected {
-  background-color: #2C3E50;
+  background-color: #3f8f95;
   color: white;
   font-weight: 600;
 }
@@ -137,15 +137,24 @@
 
 .slots-info {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
 
-.slots-info label {
-  color: #666;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
+.service-filter {
+  padding: 8px 12px;
+  border: 1px solid #E1E8ED;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #2C3E50;
+  background-color: white;
+  cursor: pointer;
+}
+
+.service-filter:focus {
+  outline: none;
+  border-color: #3f8f95;
 }
 
 .date-display {
@@ -192,7 +201,7 @@
 }
 
 .booked-cell {
-  color: #4A90E2;
+  color: #3f8f95;
   font-weight: 600;
 }
 

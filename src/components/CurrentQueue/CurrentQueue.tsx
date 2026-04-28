@@ -14,13 +14,6 @@ function CurrentQueue() {
           <div className="progress-text">Your turn!</div>
         </div>
       </div>
-
-      <div className="queue-service">
-        <div className="service-label">Now Serving: #1</div>
-        <div className="service-name">General Consultation</div>
-        <div className="service-time">2026-03-09 at 09:00 AM</div>
-        <button className="view-details-btn">View Details →</button>
-      </div>
     </div>
   )
 }

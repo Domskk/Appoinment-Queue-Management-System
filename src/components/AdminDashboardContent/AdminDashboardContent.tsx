@@ -2,6 +2,8 @@ import './AdminDashboardContent.css'
 import AdminOverview from '../AdminOverview/AdminOverview'
 import ManageServices from '../ManageServices/ManageServices'
 import ManageSlots from '../ManageSlots/ManageSlots'
+import ManageAppointments from '../ManageAppointments/ManageAppointments'
+import ManageReports from '../ManageReports/ManageReports'
 
 interface AdminDashboardContentProps {
   activePage: string
@@ -59,11 +61,14 @@ function AdminDashboardContent({ activePage, onLogout }: AdminDashboardContentPr
       {activePage === 'appointments' && (
         <>
           <header className="admin-header">
-            <h1>Appointments</h1>
+            <div>
+              <h1>Appointments</h1>
+              <p>Monitor and manage all appointments</p>
+            </div>
             <button className="logout-btn" onClick={onLogout}>Logout</button>
           </header>
           <main className="admin-main">
-            <p>Appointments management coming soon</p>
+            <ManageAppointments />
           </main>
         </>
       )}
@@ -71,11 +76,14 @@ function AdminDashboardContent({ activePage, onLogout }: AdminDashboardContentPr
       {activePage === 'reports' && (
         <>
           <header className="admin-header">
-            <h1>Reports</h1>
+            <div>
+              <h1>Reports</h1>
+              <p>Wait time analytics & service demand insights</p>
+            </div>
             <button className="logout-btn" onClick={onLogout}>Logout</button>
           </header>
           <main className="admin-main">
-            <p>Reports coming soon</p>
+            <ManageReports />
           </main>
         </>
       )}

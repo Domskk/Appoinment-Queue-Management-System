@@ -38,8 +38,8 @@
 }
 
 .sidebar-quote img {
-  width: 180px;
-  height: 180px;
+  width: 320px;
+  height: 320px;
   object-fit: cover;
   border-radius: 50%;
   background-color: white;
@@ -72,7 +72,14 @@
   text-align: center;
   margin-bottom: 30px;
   font-size: 28px;
-  color: var(--text-dark);
+  background: linear-gradient(
+  to bottom,
+  #3f8f95,  
+  #2f6f73, 
+  #1f4f52   
+);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
 .form-group {
@@ -90,13 +97,13 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--primary-blue);
+  border-color:  #3f8f95;
 }
 
 .signup-btn {
   width: 100%;
   padding: 14px;
-  background-color: var(--primary-blue);
+  background-color: #3f8f95;
   color: white;
   border: none;
   border-radius: 8px;
@@ -108,7 +115,7 @@
 }
 
 .signup-btn:hover {
-  background-color: #3a7bc8;
+  background-color: #2f6f73;
 }
 
 .login-text {
@@ -120,7 +127,7 @@
 
 .login-link {
   font-weight: 600;
-  color: var(--primary-blue);
+  color: #3f8f95;
   cursor: pointer;
 }
 

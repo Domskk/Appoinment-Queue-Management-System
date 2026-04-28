@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './Signup.css'
 
 interface SignupProps {
-  onSignup: (email: string) => void
+  onSignup: (email: string, fullName: string) => void
 }
 
 function Signup({ onSignup }: SignupProps) {
@@ -15,8 +15,9 @@ function Signup({ onSignup }: SignupProps) {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault()
-    if (email && password && confirmPassword && password === confirmPassword) {
-      onSignup(email)
+    if (email && password && confirmPassword && password === confirmPassword && name) {
+      localStorage.setItem('aqms_user', JSON.stringify({ email, fullName: name }))
+      onSignup(email, name)
       navigate('/dashboard')
     }
   }
@@ -26,9 +27,9 @@ function Signup({ onSignup }: SignupProps) {
       <div className="signup-sidebar">
         <h1 className="sidebar-logo">AQMS</h1>
         <div className="sidebar-quote">
-          <p className="quote-line">"Join us today</p>
-          <p className="quote-line">and take control</p>
-          <p className="quote-line">of your time."</p>
+          <p className="quote-line">"Start your journey</p>
+          <p className="quote-line">to smarter care."</p>
+          <img src="/AQMS.logo.png" alt="AQMS Logo" />
         </div>
       </div>
 

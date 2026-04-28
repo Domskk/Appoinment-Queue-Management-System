@@ -11,18 +11,24 @@ import './App.css'
 
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
-  const [, setUserEmail] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const [userFullName, setUserFullName] = useState('')
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false)
   const [, setAdminEmail] = useState('')
 
-  const handleUserLogin = (email: string) => {
+  const handleUserLogin = (email: string, fullName?: string) => {
     setIsUserLoggedIn(true)
     setUserEmail(email)
+    if (fullName) {
+      setUserFullName(fullName)
+    }
   }
 
   const handleUserLogout = () => {
     setIsUserLoggedIn(false)
     setUserEmail('')
+    setUserFullName('')
+    localStorage.removeItem('aqms_user')
   }
 
   const handleAdminLogin = (email: string) => {
@@ -42,7 +48,7 @@ function App() {
         <Route path="/" element={!isUserLoggedIn ? <Landing /> : <Navigate to="/dashboard" />} />
         <Route path="/login" element={!isUserLoggedIn ? <Login onLogin={handleUserLogin} /> : <Navigate to="/dashboard" />} />
         <Route path="/signup" element={!isUserLoggedIn ? <Signup onSignup={handleUserLogin} /> : <Navigate to="/dashboard" />} />
-        <Route path="/dashboard" element={isUserLoggedIn ? <Dashboard onLogout={handleUserLogout} /> : <Navigate to="/" />} />
+        <Route path="/dashboard" element={isUserLoggedIn ? <Dashboard onLogout={handleUserLogout} userFullName={userFullName || userEmail.split('@')[0]} /> : <Navigate to="/" />} />
         <Route path="/services" element={isUserLoggedIn ? <Services /> : <Navigate to="/login" />} />
 
         {/* Admin Routes */}

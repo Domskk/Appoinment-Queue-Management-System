@@ -15,8 +15,15 @@
 
 .admin-header h1 {
   font-size: 28px;
-  color: var(--text-dark);
   margin-bottom: 5px;
+  background: linear-gradient(
+  to bottom,
+  #3f8f95,  
+  #2f6f73, 
+  #1f4f52   
+);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
 .admin-header p {
@@ -25,7 +32,7 @@
 }
 
 .logout-btn {
-  background-color: var(--primary-blue);
+  background-color: #3f8f95;
   color: white;
   padding: 10px 20px;
   border-radius: 6px;
@@ -35,7 +42,7 @@
 }
 
 .logout-btn:hover {
-  background-color: #3a7bc8;
+  background-color: #2f6f73;
 }
 
 .admin-main {

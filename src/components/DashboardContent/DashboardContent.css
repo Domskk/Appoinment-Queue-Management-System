@@ -18,8 +18,15 @@
 
 .content-header h1 {
   font-size: 28px;
-  color: var(--text-dark);
   margin-bottom: 5px;
+  background: linear-gradient(
+  to bottom,
+  #3f8f95,  
+  #2f6f73, 
+  #1f4f52   
+);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
 .content-header p {

@@ -1,4 +1,5 @@
 import { FiRefreshCcw } from 'react-icons/fi'
+import { useAppointments } from '../../contexts/AppointmentsContext'
 import './QueueStatus.css'
 
 interface QueueAppointment {
@@ -13,22 +14,29 @@ interface QueueStatusProps {
 }
 
 function QueueStatus({ onViewPastAppointment }: QueueStatusProps) {
+  const { appointments } = useAppointments()
+
   const handleRefresh = () => {
-    // Refresh queue status - integrate with backend later
     alert('Queue status refreshed!')
   }
 
-  const currentAppointment = {
-    service: 'General Consultation',
-    date: 'Monday, March 9',
-    queueNumber: 1,
-    estimatedWait: '0m',
-    nowServing: 1
-  }
+  const activeAppointments: QueueAppointment[] = appointments
+    .filter(a => a.status !== 'Completed')
+    .map(a => ({
+      id: a.id,
+      service: a.service,
+      date: a.date,
+      status: 'pending' as const,
+    }))
 
-  const activeAppointments: QueueAppointment[] = []
-
-  const pastAppointments: QueueAppointment[] = []
+  const pastAppointments: QueueAppointment[] = appointments
+    .filter(a => a.status === 'Completed')
+    .map(a => ({
+      id: a.id,
+      service: a.service,
+      date: a.date,
+      status: 'completed' as const,
+    }))
 
   return (
     <div className="queue-status">
@@ -45,31 +53,17 @@ function QueueStatus({ onViewPastAppointment }: QueueStatusProps) {
 
       <div className="queue-content">
         <div className="current-appointment">
-          <div className="appointment-title">{currentAppointment.service}</div>
-          <div className="appointment-date">{currentAppointment.date}</div>
-          <div className="status-badge pending">⊙ Pending</div>
-
-          <div className="queue-info-grid">
-            <div className="queue-info-box">
-              <div className="info-label">Your Number</div>
-              <div className="info-value">#{currentAppointment.queueNumber}</div>
+          {activeAppointments.length > 0 ? (
+            <div className="appointment-item current">
+              <div className="appointment-info">
+                <strong>{activeAppointments[0].service}</strong>
+                <span>{activeAppointments[0].date}</span>
+              </div>
+              <div className="status-badge pending">⊙ Pending</div>
             </div>
-            <div className="queue-info-box">
-              <div className="info-label">Est. Wait</div>
-              <div className="info-value">{currentAppointment.estimatedWait}</div>
-            </div>
-          </div>
-
-          <div className="progress-section">
-            <div className="progress-label">Queue Progress</div>
-            <div className="progress-bar">
-              <div className="progress-fill"></div>
-            </div>
-            <div className="progress-info">
-              <span>Now Serving: #{currentAppointment.nowServing}</span>
-              <span>Your Number: #{currentAppointment.queueNumber}</span>
-            </div>
-          </div>
+          ) : (
+            <div className="no-current-appointment">No active appointment</div>
+          )}
         </div>
 
         <div className="active-appointments">
@@ -80,6 +74,10 @@ function QueueStatus({ onViewPastAppointment }: QueueStatusProps) {
             ) : (
               activeAppointments.map(apt => (
                 <div key={apt.id} className="appointment-item">
+                  <div className="appointment-info">
+                    <strong>{apt.service}</strong>
+                    <span>{apt.date}</span>
+                  </div>
                   <div className="status-badge pending">⊙ Pending</div>
                 </div>
               ))
@@ -99,6 +97,10 @@ function QueueStatus({ onViewPastAppointment }: QueueStatusProps) {
                   className="appointment-item clickable"
                   onClick={() => onViewPastAppointment(apt)}
                 >
+                  <div className="appointment-info">
+                    <strong>{apt.service}</strong>
+                    <span>{apt.date}</span>
+                  </div>
                   <div className="status-badge completed">✓ Completed</div>
                 </button>
               ))

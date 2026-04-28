@@ -6,9 +6,10 @@ import './Dashboard.css'
 
 interface DashboardProps {
   onLogout: () => void
+  userFullName: string
 }
 
-function Dashboard({ onLogout }: DashboardProps) {
+function Dashboard({ onLogout, userFullName }: DashboardProps) {
   const navigate = useNavigate()
   const [activePage, setActivePage] = useState('dashboard')
 
@@ -20,9 +21,11 @@ function Dashboard({ onLogout }: DashboardProps) {
   return (
     <div className="dashboard">
       <Sidebar activePage={activePage} onPageChange={setActivePage} />
-      <DashboardContent 
+      <DashboardContent
         activePage={activePage}
         onLogout={handleLogout}
+        userFullName={userFullName}
+        onNavigateToServices={() => setActivePage('services')}
       />
     </div>
   )

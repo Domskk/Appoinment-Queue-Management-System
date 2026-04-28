@@ -15,8 +15,15 @@
 
 .queue-header h1 {
   font-size: 28px;
-  color: var(--text-dark);
   margin-bottom: 5px;
+  background: linear-gradient(
+  to bottom,
+  #3f8f95,  
+  #2f6f73, 
+  #1f4f52   
+);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
 .queue-header p {
@@ -180,6 +187,13 @@
   padding: 40px 20px;
   color: var(--dark-gray);
   font-size: 14px;
+}
+
+.no-current-appointment {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--dark-gray);
+  font-size: 16px;
 }
 
 .appointment-item {

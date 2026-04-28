@@ -2,37 +2,28 @@ import { useState } from 'react'
 import { FaTrash } from "react-icons/fa";
 import AddSlotModal from '../AddSlotModal/AddSlotModal'
 import './ManageSlots.css'
-
-interface TimeSlot {
-  id: number
-  time: string
-  service: string
-  capacity: number
-  booked: number
-}
+import { useServices } from '../../contexts/ServicesContext'
+import { useSlots } from '../../contexts/SlotsContext'
 
 function ManageSlots() {
-  const [selectedDate, setSelectedDate] = useState(new Date(2026, 2, 9)) // March 9, 2026
-  const [slots, setSlots] = useState<TimeSlot[]>([
-    { id: 1, time: '09:00 AM', service: 'General Consultation', capacity: 50, booked: 3 },
-    { id: 2, time: '10:00 AM', service: 'Dental Cleaning', capacity: 30, booked: 15 },
-    { id: 3, time: '02:00 PM', service: 'Eye Exam', capacity: 25, booked: 8 },
-  ])
+  const { services } = useServices()
+  const { slots, addSlot, deleteSlot } = useSlots()
+  const [selectedDate, setSelectedDate] = useState(new Date(2026, 2, 9))
+  const [selectedServiceId, setSelectedServiceId] = useState<number | 'all'>('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const handleAddSlot = (newSlot: { time: string; service: string; capacity: number }) => {
-    const slot: TimeSlot = {
-      ...newSlot,
-      booked: 0,
-      id: Math.max(...slots.map(s => s.id), 0) + 1,
-    }
-    setSlots([...slots, slot])
+  const handleAddSlot = (newSlot: { time: string; serviceName: string; capacity: number; serviceId: number; date: string }) => {
+    addSlot(newSlot)
     setIsModalOpen(false)
   }
 
   const handleDeleteSlot = (id: number) => {
-    setSlots(slots.filter(s => s.id !== id))
+    deleteSlot(id)
   }
+
+  const filteredSlots = selectedServiceId === 'all' 
+    ? slots 
+    : slots.filter(slot => slot.serviceId === selectedServiceId)
 
   const handlePrevMonth = () => {
     setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1))
@@ -112,7 +103,16 @@ function ManageSlots() {
         <div className="slots-section">
           <div className="slots-header">
             <div className="slots-info">
-              <label>All Services</label>
+              <select 
+                className="service-filter"
+                value={selectedServiceId}
+                onChange={(e) => setSelectedServiceId(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+              >
+                <option value="all">All Services</option>
+                {services.map(service => (
+                  <option key={service.id} value={service.id}>{service.name}</option>
+                ))}
+              </select>
               <span className="date-display">{selectedDateStr}</span>
             </div>
           </div>
@@ -129,10 +129,10 @@ function ManageSlots() {
                 </tr>
               </thead>
               <tbody>
-                {slots.map(slot => (
+                {filteredSlots.map(slot => (
                   <tr key={slot.id}>
                     <td>{slot.time}</td>
-                    <td>{slot.service}</td>
+                    <td>{slot.serviceName}</td>
                     <td>{slot.capacity}</td>
                     <td className="booked-cell">{slot.booked}/{slot.capacity}</td>
                     <td className="actions-cell">
@@ -163,6 +163,7 @@ function ManageSlots() {
           onClose={() => setIsModalOpen(false)}
           onAddSlot={handleAddSlot}
           selectedDate={selectedDate}
+          services={services}
         />
       )}
     </div>

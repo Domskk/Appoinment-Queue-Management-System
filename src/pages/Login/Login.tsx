@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './Login.css'
 
 interface LoginProps {
-  onLogin: (email: string) => void
+  onLogin: (email: string, fullName?: string) => void
 }
 
 function Login({ onLogin }: LoginProps) {
@@ -14,7 +14,19 @@ function Login({ onLogin }: LoginProps) {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (email && password) {
-      onLogin(email)
+      const storedUser = localStorage.getItem('aqms_user')
+      let fullName: string | undefined
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser)
+          if (user.email === email) {
+            fullName = user.fullName
+          }
+        } catch (_) {
+          // ignore parse error
+        }
+      }
+      onLogin(email, fullName)
       navigate('/dashboard')
     }
   }
@@ -27,13 +39,12 @@ function Login({ onLogin }: LoginProps) {
           <p className="quote-line">"Smart queues.</p>
           <p className="quote-line">Seamless care."</p>
           <img src="/AQMS.logo.png" alt="AQMS Logo" />
-          <p className="sidebar-subtitle">Appointment Queue Management System</p>
         </div>
       </div>
       
       <div className="login-form-section">
         <div className="login-form-container">
-          <h2>Login</h2>
+          <h2>Sign In</h2>
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <input

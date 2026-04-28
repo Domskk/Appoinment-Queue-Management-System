@@ -39,7 +39,6 @@ function Profile() {
             <div className="profile-details">
               <h2>{userProfile.fullName}</h2>
               <p className="email">{userProfile.email}</p>
-              <span className="role-badge">{userProfile.role}</span>
             </div>
           </div>
         </div>
@@ -47,7 +46,6 @@ function Profile() {
         <div className="edit-profile-section">
           <div className="edit-header">
             <h3>Edit Profile</h3>
-            <span className="api-endpoint">PUT /api/users/profile</span>
           </div>
 
           <div className="form-group">

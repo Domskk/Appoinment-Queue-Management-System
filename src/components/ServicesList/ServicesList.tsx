@@ -1,12 +1,7 @@
 import { useState } from 'react'
 import { FaClipboardList } from 'react-icons/fa'
 import './ServicesList.css'
-
-interface Service {
-  id: number
-  name: string
-  duration: number
-}
+import { Service } from '../../contexts/ServicesContext'
 
 interface ServicesListProps {
   services: Service[]
@@ -59,7 +54,7 @@ function ServicesList({ services, onSelectService }: ServicesListProps) {
         <div className="services-grid">
           {filteredServices.length === 0 ? (
             <div className="no-services">
-              <FaClipboardList className="empty-icon" />
+              <FaClipboardList className="empty-icon" style={{ color: '#2f6f73' }} />
               <p>No services available</p>
               <p className="empty-subtext">Services will be available soon</p>
             </div>
