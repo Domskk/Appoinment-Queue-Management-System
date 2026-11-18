@@ -22,9 +22,16 @@ function Services() {
   })
   const [queueNumber, setQueueNumber] = useState(0)
   const [bookingError, setBookingError] = useState('')
-  const [, setBookingLoading] = useState(false)
+  const [bookingLoading, setBookingLoading] = useState(false)
 
   const activeServices = getActiveServices()
+
+  interface BookingResult {
+    queue_number: number
+    appointment_date: string
+    appointment_time: string
+    estimated_end: string
+  }
 
   const handleSelectService = (service: Service) => {
     setBookingData({ service, date: '', time: '', slotId: null })
@@ -36,41 +43,36 @@ function Services() {
     setStep('confirm')
   }
 
-  const handleConfirmBooking = async () => {
-     console.log('Booking data:', {
-    service_id: bookingData.service?.id,
-    slot_id: bookingData.slotId,
-    appointment_date: bookingData.date,
-    appointment_time: bookingData.time,
-  })
-    if (!bookingData.service || !bookingData.date || !bookingData.time) return
+  const handleConfirmBooking = async (): Promise<BookingResult | null> => {
+    if (!bookingData.service || !bookingData.slotId) return null
 
     setBookingLoading(true)
     setBookingError('')
 
     try {
       const token = localStorage.getItem('token') || ''
-      const appointmentPayload: any = {
+      const res = await createAppointment({
         service_id: bookingData.service.id,
-        appointment_date: bookingData.date,
-        appointment_time: bookingData.time,
-        notes: ''
-      }
-
-      if (bookingData.slotId != null) {
-        appointmentPayload.slot_id = bookingData.slotId
-      }
-
-      const res = await createAppointment(appointmentPayload, token)
+        slot_id: bookingData.slotId,
+        notes: '',
+      }, token)
 
       if (res.success) {
         setQueueNumber(res.data.queue_number)
         setStep('confirmed')
+        return {
+          queue_number: res.data.queue_number,
+          appointment_date: res.data.appointment_date,
+          appointment_time: res.data.appointment_time,
+          estimated_end: res.data.estimated_end,
+        }
       } else {
-        setBookingError(res.message || 'Booking failed')
+        setBookingError(res.message)
+        return null
       }
     } catch (err) {
       setBookingError('Cannot connect to server')
+      return null
     } finally {
       setBookingLoading(false)
     }
@@ -110,6 +112,7 @@ function Services() {
             bookingData={bookingData}
             onConfirm={handleConfirmBooking}
             onGoBack={handleGoBack}
+            loading={bookingLoading}
           />
         </>
       )}

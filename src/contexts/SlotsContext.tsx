@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
-import { getAdminSlots, getSlots, deleteSlot as apiDeleteSlot } from '../api/routes'
+import { getAdminSlots, getSlots, SlotData, deleteSlot as apiDeleteSlot } from '../api/routes'
 
 export interface TimeSlot {
   id: number
@@ -41,17 +41,16 @@ export function SlotsProvider({ children }: { children: ReactNode }) {
         : await getSlots()
 
       if (res.success) {
-        const mapped: TimeSlot[] = res.data.map((s: any) => ({
-          id: Number(s.id),
-          serviceId: Number(s.service_id),  // ← ensure it's a number
+        const mapped: TimeSlot[] = res.data.map((s: SlotData) => ({
+          id: s.id,
+          serviceId: s.service_id,
           serviceName: s.service_name,
           date: s.slot_date,
           time: s.slot_time,
-          capacity: Number(s.capacity),
-          booked: Number(s.capacity) - Number(s.available_capacity),
+          capacity: s.capacity,
+          booked: s.capacity - s.available_capacity,
         }))
         setSlots(mapped)
-        console.log('Slots loaded:', mapped) // ← temporary debug
       }
     } catch (err) {
       console.error('Failed to fetch slots:', err)

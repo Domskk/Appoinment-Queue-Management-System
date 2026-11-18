@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getServices, updateService as apiUpdateService } from '../api/routes';
+import { getServices, ServiceData, updateService as apiUpdateService } from '../api/routes';
 
 export interface Service {
   id: number;
@@ -32,12 +32,12 @@ export function ServicesProvider({ children }: { children: ReactNode }) {
     try {
       const res = await getServices();
       if (res.success) {
-        const mapped = res.data.map((s: any) => ({
+        const mapped = res.data.map((s: ServiceData) => ({
           id: s.id,
           name: s.name,
           description: s.description,
           duration: s.duration,
-          status: s.is_active ? 'Active' : 'Inactive',
+          status: s.is_active ? 'Active' as const : 'Inactive' as const,
         }));
         setServices(mapped);
       }

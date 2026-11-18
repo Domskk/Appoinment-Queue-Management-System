@@ -28,14 +28,19 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
           setError('Access denied. Admin accounts only.')
           setLoading(false)
           return
-        } else {
-          localStorage.setItem('isAdminLoggedIn', 'true')
         }
 
         localStorage.setItem('token', res.data.token)
-        localStorage.setItem('user', JSON.stringify(userData))
+        localStorage.setItem('user', JSON.stringify({
+          id: userData.id,
+          name: userData.name,
+          role: userData.role,
+        }))
+        localStorage.setItem('isAdminLoggedIn', 'true')
         onLogin(email)
         navigate('/admin/dashboard', { replace: true })
+      } else {
+        setError(res.message)
       }
     } catch (err) {
       setError('Cannot connect to server')

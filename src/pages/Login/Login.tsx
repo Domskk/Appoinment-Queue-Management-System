@@ -31,7 +31,11 @@ function Login({ onLogin }: LoginProps) {
         }
 
         localStorage.setItem('token', res.data.token)
-        localStorage.setItem('user', JSON.stringify(userData))
+        localStorage.setItem('user', JSON.stringify({
+          id: userData.id,
+          name: userData.name,
+          role: userData.role,
+        }))
         onLogin(email, userData.name)
         navigate('/dashboard')
       }else {

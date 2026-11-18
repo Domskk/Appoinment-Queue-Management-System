@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { register } from '../../api/routes'
+import { login, register } from '../../api/routes'
 import './Signup.css'
 
 interface SignupProps {
@@ -45,14 +45,24 @@ function Signup({ onSignup }: SignupProps) {
 
     setLoading(true)
     try {
-      const res = await register({ name: trimmedName, email, password })
-      if (res.success) {
-        localStorage.setItem('token', res.data.token)
-        localStorage.setItem('user', JSON.stringify(res.data))
-        onSignup(email, trimmedName)
+      const registration = await register({ name: trimmedName, email, password })
+      if (!registration.success) {
+        setError(registration.message)
+        return
+      }
+
+      const session = await login({ email, password })
+      if (session.success) {
+        localStorage.setItem('token', session.data.token)
+        localStorage.setItem('user', JSON.stringify({
+          id: session.data.user.id,
+          name: session.data.user.name,
+          role: session.data.user.role,
+        }))
+        onSignup(email, session.data.user.name)
         navigate('/dashboard')
       } else {
-        setError(res.message || 'Registration failed')
+        setError('Account created. Please sign in to continue.')
       }
     } catch (err) {
       setError('Cannot connect to server')

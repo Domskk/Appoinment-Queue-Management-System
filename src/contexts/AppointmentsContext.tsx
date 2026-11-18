@@ -5,6 +5,7 @@ import {
   updateAppointmentStatus,
   deleteAppointment as apiDeleteAppointment,
   getArchivedAppointments as apiGetArchived,
+  AppointmentData,
 } from '../api/routes'
 
 export type AppointmentStatus = 'Pending' | 'Confirmed' | 'Serving' | 'Completed'
@@ -54,7 +55,7 @@ export function AppointmentsProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('token') || ''
       const res = await getAppointmentsByUser(userId, token)
       if (res.success) {
-        const mapped = res.data.map((a: any) => ({
+        const mapped = res.data.map((a: AppointmentData) => ({
           id: a.id,
           queueNumber: a.queue_number,
           userName: a.user_name || '',
@@ -62,7 +63,7 @@ export function AppointmentsProvider({ children }: { children: ReactNode }) {
           service: a.service_name,
           date: a.appointment_date,
           time: a.appointment_time,
-          estimatedEnd: a.estimated_end ?? null,
+          estimatedEnd: a.estimated_end || undefined,
           status: capitalize(a.status) as AppointmentStatus,
         }))
         setAppointments(mapped)
@@ -80,10 +81,10 @@ export function AppointmentsProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('token') || ''
       const res = await getAdminAppointments(token)
       if (res.success) {
-        const mapped = res.data.map((a: any) => ({
+        const mapped = res.data.map((a: AppointmentData) => ({
           id: a.id,
           queueNumber: a.queue_number,
-          userName: a.user_name,
+          userName: a.user_name || '',
           userEmail: '',
           service: a.service_name,
           date: a.appointment_date,
@@ -105,10 +106,10 @@ export function AppointmentsProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('token') || ''
       const res = await apiGetArchived(token)
       if (res.success) {
-        const mapped = res.data.map((a: any) => ({
+        const mapped = res.data.map((a: AppointmentData) => ({
           id: a.id,
           queueNumber: a.queue_number,
-          userName: a.user_name,
+          userName: a.user_name || '',
           userEmail: '',
           service: a.service_name,
           date: a.appointment_date,

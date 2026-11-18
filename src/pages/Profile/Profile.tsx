@@ -5,7 +5,6 @@ import { getProfile, updateProfile } from '../../api/routes'
 function Profile() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
   const [editedName, setEditedName] = useState('')
   const [editedPhone, setEditedPhone] = useState('')
   const [loading, setLoading] = useState(true)
@@ -21,7 +20,6 @@ function Profile() {
         if (res.success) {
           setName(res.data.name)
           setEmail(res.data.email)
-          setPhone(res.data.phone || '')
           setEditedName(res.data.name)
           setEditedPhone(res.data.phone || '')
         }
@@ -42,7 +40,6 @@ function Profile() {
       const res = await updateProfile({ name: editedName, phone: editedPhone }, token)
       if (res.success) {
         setName(editedName)
-        setPhone(editedPhone)
         setSaved(true)
         setTimeout(() => setSaved(false), 2000)
       } else {

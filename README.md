@@ -97,24 +97,20 @@ Lists upcoming appointments with:
 - Date and time
 - Appointment status (Confirmed, Serving, Pending)
 
-## Frontend-Only Implementation
+## Backend Integration
 
-This is a frontend-only prototype. Features currently implemented:
-- Local state management using React hooks
-- Client-side navigation with React Router
-- Sample data hardcoded for demonstration
+The frontend connects to the PHP API at `http://localhost/appointmentmanagement/api` by default. Update `src/api/config.ts` if the backend is hosted elsewhere.
+
+API responses are mapped to typed, allowlisted fields in `src/api/routes.ts`; raw response objects and server error messages are not returned to UI components. Public registration creates regular user accounts only. Admin accounts must be provisioned through a trusted process.
+
+Some dashboard and reporting views still use local state and may need further integration with their corresponding API endpoints.
 
 ## Future Enhancements
 
-- Backend API integration
 - Real-time queue updates with WebSockets
-- User authentication with JWT
-- Database integration
 - Email notifications
 - Calendar integration
 - Appointment rescheduling
-- Admin dashboard
-- Analytics and reporting
 
 ## License
 
