@@ -7,6 +7,7 @@ interface AppointmentOverviewProps {
   queuePosition: number | string
 }
 
+
 function AppointmentOverview({ upcoming, completed, queuePosition }: AppointmentOverviewProps) {
   return (
     <div className="appointment-overview">

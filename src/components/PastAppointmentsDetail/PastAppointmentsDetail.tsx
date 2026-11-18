@@ -5,7 +5,7 @@ interface PastAppointmentsDetailProps {
     id: number
     service: string
     date: string
-    status: 'pending' | 'completed'
+    status: 'pending' | 'confirmed' | 'serving' | 'completed'
   }
   onGoBack: () => void
 }
@@ -19,16 +19,21 @@ function PastAppointmentsDetail({ appointment, onGoBack }: PastAppointmentsDetai
 
       <div className="detail-content">
         <h1>{appointment ? appointment.service : 'Past Appointments'}</h1>
-        
+
         {appointment && (
           <div className="appointment-detail-card">
             <p><strong>Date:</strong> {appointment.date}</p>
-            <p><strong>Status:</strong> <span className={`status-badge ${appointment.status}`}>{appointment.status}</span></p>
+            <p>
+              <strong>Status:</strong>{' '}
+              <span className={`status-badge ${appointment.status}`}>
+                {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+              </span>
+            </p>
           </div>
         )}
 
         <div className="detail-appointments">
-          <div className="no-appointments">No past appointments to display</div>
+          <div className="no-appointments">No additional details available</div>
         </div>
       </div>
     </div>

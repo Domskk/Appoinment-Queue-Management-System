@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { register } from '../../api/routes'
 import './Signup.css'
 
 interface SignupProps {
@@ -12,13 +13,51 @@ function Signup({ onSignup }: SignupProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSignup = (e: React.FormEvent) => {
+  // ── Validation rules ──────────────────────────────
+  const NAME_REGEX = /^[A-Za-z\s.'-]+$/ // letters, spaces, . ' - only
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email && password && confirmPassword && password === confirmPassword && name) {
-      localStorage.setItem('aqms_user', JSON.stringify({ email, fullName: name }))
-      onSignup(email, name)
-      navigate('/dashboard')
+    setError('')
+
+    const trimmedName = name.trim()
+
+    // 1. Name must not contain numbers or symbols
+    if (!NAME_REGEX.test(trimmedName)) {
+      setError('Name must contain letters only (no numbers or special characters)')
+      return
+    }
+
+    // 2. Password length check
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long')
+      return
+    }
+
+    // 3. Confirm password match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await register({ name: trimmedName, email, password })
+      if (res.success) {
+        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('user', JSON.stringify(res.data))
+        onSignup(email, trimmedName)
+        navigate('/dashboard')
+      } else {
+        setError(res.message || 'Registration failed')
+      }
+    } catch (err) {
+      setError('Cannot connect to server')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -32,10 +71,10 @@ function Signup({ onSignup }: SignupProps) {
           <img src="/AQMS.logo.png" alt="AQMS Logo" />
         </div>
       </div>
-
       <div className="signup-form-section">
         <div className="signup-form-container">
           <h2>Sign Up</h2>
+          {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
           <form onSubmit={handleSignup}>
             <div className="form-group">
               <input
@@ -43,6 +82,8 @@ function Signup({ onSignup }: SignupProps) {
                 placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                pattern="[A-Za-z\s.'-]+"
+                title="Name must contain letters only"
                 required
               />
             </div>
@@ -61,6 +102,7 @@ function Signup({ onSignup }: SignupProps) {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
                 required
               />
             </div>
@@ -70,10 +112,13 @@ function Signup({ onSignup }: SignupProps) {
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                minLength={6}
                 required
               />
             </div>
-            <button type="submit" className="signup-btn">Sign Up</button>
+            <button type="submit" className="signup-btn" disabled={loading}>
+              {loading ? 'Signing up...' : 'Sign Up'}
+            </button>
           </form>
           <p className="login-text">Already have an account? <span className="login-link" onClick={() => navigate('/login')}>Login</span>.</p>
         </div>

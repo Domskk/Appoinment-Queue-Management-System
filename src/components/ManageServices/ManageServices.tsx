@@ -25,12 +25,15 @@ function ManageServices() {
     toggleServiceStatus(id)
   }
 
-  const handleEditService = (service: Service) => {
-    updateService(service)
-    setIsEditModalOpen(false)
-    setSelectedService(null)
-  }
-
+  const handleEditService = async (service: Service) => {
+      const success = await updateService(service)
+      if (success) {
+        setIsEditModalOpen(false)
+        setSelectedService(null)
+      } else {
+        alert('Failed to update service. Please try again.')
+      }
+    }
   const openEditModal = (service: Service) => {
     setSelectedService(service)
     setIsEditModalOpen(true)

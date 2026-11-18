@@ -7,7 +7,7 @@ interface QueueAppointment {
   id: number
   service: string
   date: string
-  status: 'pending' | 'completed'
+  status: 'pending' | 'confirmed' | 'serving' | 'completed'
 }
 
 function MyQueue() {

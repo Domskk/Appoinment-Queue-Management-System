@@ -1,10 +1,7 @@
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0,0,0,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,254 +10,270 @@
 
 .modal-content {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   width: 90%;
+  max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
 }
 
+/* ── Header ── */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid #E1E8ED;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8edf2;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #2C3E50;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a2733;
 }
 
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  color: #999;
-  padding: 0;
+  color: #aab;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.modal-close:hover { background: #f0f2f5; color: #333; }
+
+/* ── Error ── */
+.modal-error {
+  margin: 0;
+  padding: 10px 24px;
+  background: #fff0f0;
+  color: #c0392b;
+  font-size: 13px;
+  border-bottom: 1px solid #fdd;
 }
 
-.modal-close:hover {
-  color: #2C3E50;
-}
+/* ── Form ── */
+.modal-form { padding: 20px 24px 24px; }
 
-.modal-form {
-  padding: 24px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
+.form-group { margin-bottom: 18px; }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #2C3E50;
-  font-weight: 500;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.label-hint {
+  font-weight: 400;
+  color: #888;
+  font-size: 12px;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #D1D8E0;
-  border-radius: 4px;
+  padding: 9px 12px;
+  border: 1px solid #d1d8e0;
+  border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
-  transition: border-color 0.2s ease;
+  color: #1a2733;
+  background: white;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: #3f8f95;
-  box-shadow: 0 0 0 3px rgba(63, 143, 149, 0.1);
+  box-shadow: 0 0 0 3px rgba(63,143,149,0.12);
 }
 
-.date-selector {
-  position: relative;
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
-.date-input {
-  cursor: pointer;
-  background: white;
-}
-
-.date-input:hover {
-  border-color: #3f8f95;
-}
+/* ── Date picker ── */
+.date-selector { position: relative; }
+.date-input { cursor: pointer; }
+.date-input:hover { border-color: #3f8f95; }
 
 .date-picker-dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #D1D8E0;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 16px;
-  margin-top: 8px;
-  z-index: 1001;
+  border: 1px solid #d1d8e0;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 14px;
+  z-index: 1010;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
-
 .calendar-header button {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
-  color: #2C3E50;
+  color: #2c3e50;
   padding: 4px 8px;
+  border-radius: 4px;
 }
-
-.calendar-header button:hover {
-  color: #3f8f95;
-}
-
+.calendar-header button:hover { background: #f0f2f5; }
 .calendar-header h4 {
   margin: 0;
-  font-size: 14px;
-  color: #2C3E50;
+  font-size: 13px;
   font-weight: 600;
+  color: #2c3e50;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
-
 .weekday {
-  font-weight: 600;
-  color: #666;
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 700;
   text-align: center;
-  padding: 6px 4px;
+  color: #888;
+  padding: 4px 0;
   text-transform: uppercase;
 }
-
 .calendar-day {
   aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 12px;
-  color: #2C3E50;
   font-weight: 500;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
+  color: #2c3e50;
+  transition: all 0.15s;
 }
+.calendar-day:not(.empty):hover { background: #e8f4f5; }
+.calendar-day.selected { background: #3f8f95; color: white; font-weight: 700; }
+.calendar-day.empty { cursor: default; }
 
-.calendar-day:not(.empty):hover {
-  background-color: #F0F7FF;
-  border-color: #3f8f95;
+/* ── Slot preview chips ── */
+.slot-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #f7f9fb;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  min-height: 46px;
+  max-height: 130px;
+  overflow-y: auto;
 }
-
-.calendar-day.selected {
-  background-color: #2C3E50;
-  color: white;
+.preview-chip {
+  background: #e0f2f1;
+  color: #00695c;
+  border: 1px solid #b2dfdb;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
+}
+.no-preview {
+  color: #aab;
+  font-size: 13px;
+  align-self: center;
 }
 
-.calendar-day.empty {
-  color: #E1E8ED;
-  cursor: default;
+/* ── Progress bar ── */
+.progress-wrap {
+  margin-bottom: 16px;
+  background: #f0f2f5;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  height: 28px;
+}
+.progress-bar {
+  height: 100%;
+  background: #3f8f95;
+  transition: width 0.2s ease;
+  border-radius: 6px;
+}
+.progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a2733;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
+/* ── Actions ── */
 .modal-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid #E1E8ED;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #e8edf2;
 }
-
 .btn-cancel {
   flex: 1;
-  padding: 10px 16px;
-  border: 1px solid #D1D8E0;
+  padding: 10px;
+  border: 1px solid #d1d8e0;
   background: white;
-  color: #2C3E50;
-  border-radius: 4px;
+  color: #555;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.15s;
 }
-
-.btn-cancel:hover {
-  border-color: #3f8f95;
-  color: #3f8f95;
-}
+.btn-cancel:hover:not(:disabled) { border-color: #3f8f95; color: #3f8f95; }
+.btn-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-create {
-  flex: 1;
-  padding: 10px 16px;
-  background-color: #3f8f95;
+  flex: 2;
+  padding: 10px;
+  background: #3f8f95;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+  font-weight: 600;
+  transition: background 0.15s;
 }
-
-.btn-create:hover {
-  background-color: #2f6f73;
-}
-
-.btn-create:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
+.btn-create:hover:not(:disabled) { background: #2f6f73; }
+.btn-create:disabled { background: #aab; cursor: not-allowed; }
 
 @media (max-width: 480px) {
-  .modal-content {
-    width: 95%;
-    max-height: 95vh;
-  }
-
-  .modal-header {
-    padding: 16px;
-  }
-
-  .modal-form {
-    padding: 16px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-header h2 {
-    font-size: 18px;
-  }
+  .modal-content { width: 95%; }
+  .modal-form { padding: 16px; }
+  .form-row { grid-template-columns: 1fr; }
 }

@@ -9,51 +9,60 @@ import Signup from './pages/Signup/Signup'
 import Services from './pages/Services/Services'
 import './App.css'
 
+// Read initial state from localStorage so refresh doesn't log you out
+function getStoredUser() {
+  try { return JSON.parse(localStorage.getItem('user') || '{}') } catch { return {} }
+}
+
 function App() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
-  const [userEmail, setUserEmail] = useState('')
-  const [userFullName, setUserFullName] = useState('')
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false)
-  const [, setAdminEmail] = useState('')
+  const storedUser = getStoredUser()
+
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(
+    !!localStorage.getItem('token') && storedUser.role === 'user'
+  )
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(
+    !!localStorage.getItem('token') && storedUser.role === 'admin'
+  )
+  const [userFullName, setUserFullName] = useState(
+    storedUser.name || ''
+  )
 
   const handleUserLogin = (email: string, fullName?: string) => {
     setIsUserLoggedIn(true)
-    setUserEmail(email)
-    if (fullName) {
-      setUserFullName(fullName)
-    }
+    setUserFullName(fullName || email.split('@')[0])
   }
 
   const handleUserLogout = () => {
     setIsUserLoggedIn(false)
-    setUserEmail('')
     setUserFullName('')
-    localStorage.removeItem('aqms_user')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
 
-  const handleAdminLogin = (email: string) => {
+  const handleAdminLogin = (_email: string) => {
     setIsAdminLoggedIn(true)
-    setAdminEmail(email)
   }
 
   const handleAdminLogout = () => {
     setIsAdminLoggedIn(false)
-    setAdminEmail('')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('isAdminLoggedIn')
   }
 
   return (
     <Router>
       <Routes>
         {/* User Routes */}
-        <Route path="/" element={!isUserLoggedIn ? <Landing /> : <Navigate to="/dashboard" />} />
-        <Route path="/login" element={!isUserLoggedIn ? <Login onLogin={handleUserLogin} /> : <Navigate to="/dashboard" />} />
-        <Route path="/signup" element={!isUserLoggedIn ? <Signup onSignup={handleUserLogin} /> : <Navigate to="/dashboard" />} />
-        <Route path="/dashboard" element={isUserLoggedIn ? <Dashboard onLogout={handleUserLogout} userFullName={userFullName || userEmail.split('@')[0]} /> : <Navigate to="/" />} />
-        <Route path="/services" element={isUserLoggedIn ? <Services /> : <Navigate to="/login" />} />
+        <Route path="/" element={!isUserLoggedIn ? <Landing /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/login" element={!isUserLoggedIn ? <Login onLogin={handleUserLogin} /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/signup" element={!isUserLoggedIn ? <Signup onSignup={handleUserLogin} /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={isUserLoggedIn ? <Dashboard onLogout={handleUserLogout} userFullName={userFullName} /> : <Navigate to="/" replace />} />
+        <Route path="/services" element={isUserLoggedIn ? <Services /> : <Navigate to="/login" replace />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={!isAdminLoggedIn ? <AdminLogin onLogin={handleAdminLogin} /> : <Navigate to="/admin/dashboard" />} />
-        <Route path="/admin/dashboard" element={isAdminLoggedIn ? <AdminDashboard onLogout={handleAdminLogout} /> : <Navigate to="/admin" />} />
+        <Route path="/admin" element={!isAdminLoggedIn ? <AdminLogin onLogin={handleAdminLogin} /> : <Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin/dashboard" element={isAdminLoggedIn ? <AdminDashboard onLogout={handleAdminLogout} /> : <Navigate to="/admin" replace />} />
       </Routes>
     </Router>
   )

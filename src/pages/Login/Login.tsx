@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { login } from '../../api/routes'
 import './Login.css'
 
 interface LoginProps {
@@ -10,24 +11,36 @@ function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')        // show errors to user
+  const [loading, setLoading] = useState(false) // prevent double submit
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email && password) {
-      const storedUser = localStorage.getItem('aqms_user')
-      let fullName: string | undefined
-      if (storedUser) {
-        try {
-          const user = JSON.parse(storedUser)
-          if (user.email === email) {
-            fullName = user.fullName
-          }
-        } catch (_) {
-          // ignore parse error
+    setError('')
+    setLoading(true)
+
+    try {
+      const res = await login({ email, password })
+
+      if (res.success) {
+        const userData = res.data.user  // ← same fix
+
+        if (userData.role === 'admin') {
+          setError('Please use the Admin Panel to login as admin.')
+          return
         }
+
+        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('user', JSON.stringify(userData))
+        onLogin(email, userData.name)
+        navigate('/dashboard')
+      }else {
+        setError(res.message || 'Login failed')
       }
-      onLogin(email, fullName)
-      navigate('/dashboard')
+    } catch (err) {
+      setError('Cannot connect to server')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -45,6 +58,10 @@ function Login({ onLogin }: LoginProps) {
       <div className="login-form-section">
         <div className="login-form-container">
           <h2>Sign In</h2>
+
+          {/* show error message */}
+          {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <input
@@ -64,8 +81,11 @@ function Login({ onLogin }: LoginProps) {
                 required
               />
             </div>
-            <button type="submit" className="login-btn">Login</button>
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
           </form>
+
           <p className="signup-text">Don't have an account? <span className="signup-link" onClick={() => navigate('/signup')}>Sign Up</span>.</p>
           <p className="admin-link-text">Are you an admin? <a href="/admin" className="admin-link">Go to Admin Panel</a></p>
         </div>

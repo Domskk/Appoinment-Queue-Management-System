@@ -1,64 +1,78 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import './SelectTimeSlot.css'
 import { Service } from '../../contexts/ServicesContext'
 import { useSlots } from '../../contexts/SlotsContext'
 
 interface SelectTimeSlotProps {
   service: Service
-  onSelectTime: (date: string, time: string) => void
+  onSelectTime: (date: string, time: string, slotId: number) => void
   onGoBack: () => void
 }
 
+function formatTime(t: string): string {
+  const [h, m] = t.split(':')
+  const hour = parseInt(h)
+  const ampm = hour >= 12 ? 'PM' : 'AM'
+  const display = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  return `${display}:${m} ${ampm}`
+}
+
 function SelectTimeSlot({ service, onSelectTime, onGoBack }: SelectTimeSlotProps) {
-  const { getSlotsByService, bookSlot } = useSlots()
+  const { slots, getSlotsByService, fetchSlots } = useSlots()
   const [selectedDate, setSelectedDate] = useState<number | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null)
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 2))
+  const [currentMonth, setCurrentMonth] = useState(new Date())
 
-  const serviceSlots = useMemo(() => getSlotsByService(service.id), [getSlotsByService, service.id])
+  useEffect(() => { fetchSlots() }, [])
 
-  const getDaysInMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-  }
+  const serviceSlots = useMemo(
+    () => getSlotsByService(service.id),
+    [slots, service.id]
+  )
 
-  const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
+  const getDaysInMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
+  const getFirstDayOfMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay()
 
   const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
   const daysInMonth = getDaysInMonth(currentMonth)
   const firstDay = getFirstDayOfMonth(currentMonth)
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
-  const emptyDays = Array.from({ length: firstDay }, (_, i) => i)
+  const emptyDays = Array.from({ length: firstDay })
 
-  // Get available slots for selected date
+  const toDateStr = (day: number) =>
+    `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+
+  // Sorted ascending by time
   const availableSlots = useMemo(() => {
     if (!selectedDate) return []
-    const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`
-    return serviceSlots.filter(slot => slot.date === dateStr && slot.booked < slot.capacity)
+    return serviceSlots
+      .filter(s => s.date === toDateStr(selectedDate) && s.booked < s.capacity)
+      .sort((a, b) => a.time.localeCompare(b.time))
   }, [serviceSlots, selectedDate, currentMonth])
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
-  }
-
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
-  }
-
   const handleContinue = () => {
-    if (selectedDate && selectedTime && selectedSlotId) {
-      const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`
-      // Book the slot
-      bookSlot(selectedSlotId)
-      onSelectTime(dateStr, selectedTime)
-    }
+    if (selectedDate && selectedTime && selectedSlotId)
+      onSelectTime(toDateStr(selectedDate), selectedTime, selectedSlotId)
   }
 
-  const handleSelectTime = (slotId: number, time: string) => {
-    setSelectedSlotId(slotId)
-    setSelectedTime(time)
+  const today = new Date()
+  const isDisabled = (day: number) => {
+    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    return d < new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  }
+
+  const hasSlots = (day: number) =>
+    serviceSlots.some(s => s.date === toDateStr(day) && s.booked < s.capacity)
+
+  // Capacity fill level for colour coding
+  const fillLevel = (slot: { capacity: number; booked: number }) => {
+    const pct = slot.booked / slot.capacity
+    if (pct >= 0.9) return 'fill-critical'
+    if (pct >= 0.6) return 'fill-high'
+    return 'fill-ok'
   }
 
   return (
@@ -67,67 +81,87 @@ function SelectTimeSlot({ service, onSelectTime, onGoBack }: SelectTimeSlotProps
         <button className="back-btn" onClick={onGoBack}>← Back</button>
         <div>
           <h1>Select Time Slot</h1>
-          <p>Booking: {service.name}</p>
+          <p>Booking: {service.name} · {service.duration} min</p>
         </div>
       </header>
 
       <div className="time-slot-content">
+
+        {/* ── Calendar ── */}
         <div className="calendar-section">
-          <div className="date-label">Select Date</div>
+          <div className="section-label">Select Date</div>
           <div className="calendar">
-            <div className="calendar-header">
-              <button onClick={handlePrevMonth}>‹</button>
+            <div className="cal-header">
+              <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}>‹</button>
               <span>{monthName}</span>
-              <button onClick={handleNextMonth}>›</button>
+              <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}>›</button>
             </div>
-            <div className="calendar-weekdays">
-              <div>Su</div>
-              <div>Mo</div>
-              <div>Tu</div>
-              <div>We</div>
-              <div>Th</div>
-              <div>Fr</div>
-              <div>Sa</div>
+            <div className="cal-weekdays">
+              {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => <div key={d}>{d}</div>)}
             </div>
-            <div className="calendar-days">
-              {emptyDays.map((_, i) => (
-                <div key={`empty-${i}`} className="empty-day"></div>
-              ))}
+            <div className="cal-days">
+              {emptyDays.map((_, i) => <div key={`e-${i}`} className="empty-day" />)}
               {days.map(day => (
                 <button
                   key={day}
-                  className={`day ${selectedDate === day ? 'selected' : ''} ${day < 9 ? 'disabled' : ''}`}
-                  onClick={() => setSelectedDate(day)}
-                  disabled={day < 9}
+                  className={[
+                    'day',
+                    selectedDate === day ? 'selected' : '',
+                    isDisabled(day) ? 'disabled' : '',
+                    hasSlots(day) ? 'has-slots' : '',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => {
+                    setSelectedDate(day)
+                    setSelectedTime(null)
+                    setSelectedSlotId(null)
+                  }}
+                  disabled={isDisabled(day)}
                 >
                   {day}
+                  {hasSlots(day) && !isDisabled(day) && <span className="dot" />}
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="time-slots-section">
-          <div className="time-slots-header">
-            <div className="slots-title">Available Slots</div>
-            {selectedDate && (
-              <div className="selected-date">Monday, March {selectedDate}, 2026</div>
+        {/* ── Slots list ── */}
+        <div className="slots-section">
+          <div className="section-label">
+            Available Slots
+            {selectedDate && availableSlots.length > 0 && (
+              <span className="slot-count">{availableSlots.length} available</span>
             )}
           </div>
-          <div className="time-slots">
-            {availableSlots.length === 0 ? (
-              <div className="no-slots-message">No available slots for this date</div>
+
+          <div className="slots-list">
+            {!selectedDate ? (
+              <div className="empty-state">Select a date to see available slots</div>
+            ) : availableSlots.length === 0 ? (
+              <div className="empty-state">No available slots for this date</div>
             ) : (
-              availableSlots.map((slot) => (
-                <button
-                  key={slot.id}
-                  className={`time-slot ${selectedSlotId === slot.id ? 'selected' : ''}`}
-                  onClick={() => handleSelectTime(slot.id, slot.time)}
-                >
-                  <div className="time-text">{slot.time}</div>
-                  <div className="slots-available">{slot.capacity - slot.booked} available</div>
-                </button>
-              ))
+              availableSlots.map(slot => {
+                const spotsLeft = slot.capacity - slot.booked
+                const isSelected = selectedSlotId === slot.id
+                return (
+                  <button
+                    key={slot.id}
+                    className={['slot-row', isSelected ? 'selected' : '', fillLevel(slot)].join(' ')}
+                    onClick={() => { setSelectedSlotId(slot.id); setSelectedTime(slot.time) }}
+                  >
+                    <div className="slot-time">{formatTime(slot.time)}</div>
+                    <div className="slot-meta">
+                      <span className="spots-badge">{spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left</span>
+                      <div className="fill-bar">
+                        <div
+                          className="fill-bar-inner"
+                          style={{ width: `${Math.round((slot.booked / slot.capacity) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  </button>
+                )
+              })
             )}
           </div>
 
@@ -139,6 +173,7 @@ function SelectTimeSlot({ service, onSelectTime, onGoBack }: SelectTimeSlotProps
             Continue →
           </button>
         </div>
+
       </div>
     </div>
   )

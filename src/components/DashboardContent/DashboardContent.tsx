@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import AppointmentOverview from '../AppointmentOverview/AppointmentOverview'
 import UpcomingAppointments from '../UpcomingAppointments/UpcomingAppointments'
 import Services from '../../pages/Services/Services'
@@ -14,13 +15,16 @@ interface DashboardContentProps {
 }
 
 function DashboardContent({ activePage, onLogout, userFullName, onNavigateToServices }: DashboardContentProps) {
-  const { appointments } = useAppointments()
+  const { appointments, fetchUserAppointments } = useAppointments()
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    if (user?.id) fetchUserAppointments(String(user.id))
+  }, [activePage]) 
 
   const upcomingCount = appointments.filter(a => a.status !== 'Completed').length
   const completedCount = appointments.filter(a => a.status === 'Completed').length
-  const nextQueueNumber = appointments.length > 0
-    ? appointments.find(a => a.status !== 'Completed')?.queueNumber ?? '-'
-    : '-'
+  const nextQueueNumber = appointments.find(a => a.status !== 'Completed')?.queueNumber ?? '-'
 
   return (
     <div className="dashboard-content">
@@ -43,11 +47,8 @@ function DashboardContent({ activePage, onLogout, userFullName, onNavigateToServ
           </main>
         </>
       )}
-
       {activePage === 'services' && <Services />}
-
       {activePage === 'queue' && <MyQueue />}
-
       {activePage === 'profile' && <Profile />}
     </div>
   )

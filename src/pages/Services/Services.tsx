@@ -4,97 +4,92 @@ import ServicesList from '../../components/ServicesList/ServicesList'
 import SelectTimeSlot from '../../components/SelectTimeSlot/SelectTimeSlot'
 import ConfirmBooking from '../../components/ConfirmBooking/ConfirmBooking'
 import BookingConfirmed from '../../components/BookingConfirmed/BookingConfirmed'
-import { useServices } from '../../contexts/ServicesContext'
-import { Service } from '../../contexts/ServicesContext'
-import { useAppointments } from '../../contexts/AppointmentsContext'
-
-function getStoredUser() {
-  const stored = localStorage.getItem('aqms_user')
-  if (stored) {
-    try {
-      return JSON.parse(stored)
-    } catch (_) {
-      return null
-    }
-  }
-  return null
-}
+import { useServices, Service } from '../../contexts/ServicesContext'
+import { createAppointment } from '../../api/routes'
 
 interface BookingData {
   service: Service | null
   date: string
   time: string
+  slotId: number | null
 }
 
 function Services() {
-  const { getActiveServices } = useServices()
-  const { addAppointment } = useAppointments()
+  const { getActiveServices, loading } = useServices()
   const [step, setStep] = useState<'list' | 'time' | 'confirm' | 'confirmed'>('list')
   const [bookingData, setBookingData] = useState<BookingData>({
-    service: null,
-    date: '',
-    time: ''
+    service: null, date: '', time: '', slotId: null
   })
   const [queueNumber, setQueueNumber] = useState(0)
+  const [bookingError, setBookingError] = useState('')
+  const [, setBookingLoading] = useState(false)
+
   const activeServices = getActiveServices()
 
   const handleSelectService = (service: Service) => {
-    setBookingData({ ...bookingData, service })
+    setBookingData({ service, date: '', time: '', slotId: null })
     setStep('time')
   }
 
-  const handleSelectTime = (date: string, time: string) => {
-    setBookingData({ ...bookingData, date, time })
+  const handleSelectTime = (date: string, time: string, slotId: number) => {
+    setBookingData(prev => ({ ...prev, date, time, slotId }))
     setStep('confirm')
   }
 
-  const handleConfirmBooking = () => {
-    // Generate a random queue number (1-100) for now
-    const queue = Math.floor(Math.random() * 100) + 1
-    setQueueNumber(queue)
+  const handleConfirmBooking = async () => {
+     console.log('Booking data:', {
+    service_id: bookingData.service?.id,
+    slot_id: bookingData.slotId,
+    appointment_date: bookingData.date,
+    appointment_time: bookingData.time,
+  })
+    if (!bookingData.service || !bookingData.date || !bookingData.time) return
 
-    // Add appointment to global context (for admin to see)
-    if (bookingData.service && bookingData.date && bookingData.time) {
-      // Format date like "Mar 9" for display
-      const [year, month, day] = bookingData.date.split('-')
-      const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-      const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    setBookingLoading(true)
+    setBookingError('')
 
-      const user = getStoredUser()
-      addAppointment({
-        queueNumber: queue,
-        userName: user?.fullName || 'Current User',
-        userEmail: user?.email || 'user@example.com',
-        service: bookingData.service.name,
-        date: formattedDate,
-        time: bookingData.time
-      })
+    try {
+      const token = localStorage.getItem('token') || ''
+      const appointmentPayload: any = {
+        service_id: bookingData.service.id,
+        appointment_date: bookingData.date,
+        appointment_time: bookingData.time,
+        notes: ''
+      }
+
+      if (bookingData.slotId != null) {
+        appointmentPayload.slot_id = bookingData.slotId
+      }
+
+      const res = await createAppointment(appointmentPayload, token)
+
+      if (res.success) {
+        setQueueNumber(res.data.queue_number)
+        setStep('confirmed')
+      } else {
+        setBookingError(res.message || 'Booking failed')
+      }
+    } catch (err) {
+      setBookingError('Cannot connect to server')
+    } finally {
+      setBookingLoading(false)
     }
-
-    setStep('confirmed')
   }
 
-  const handleGoToDashboard = () => {
+  const handleReset = () => {
     setStep('list')
-    setBookingData({ service: null, date: '', time: '' })
+    setBookingData({ service: null, date: '', time: '', slotId: null })
     setQueueNumber(0)
-  }
-
-  const handleTrackQueue = () => {
-    setStep('list')
-    setBookingData({ service: null, date: '', time: '' })
-    setQueueNumber(0)
+    setBookingError('')
   }
 
   const handleGoBack = () => {
-    if (step === 'time') {
-      setStep('list')
-    } else if (step === 'confirm') {
-      setStep('time')
-    } else if (step === 'confirmed') {
-      handleGoToDashboard()
-    }
+    if (step === 'time') setStep('list')
+    else if (step === 'confirm') setStep('time')
+    else if (step === 'confirmed') handleReset()
   }
+
+  if (loading) return <div style={{ padding: '2rem' }}>Loading services...</div>
 
   return (
     <div className="services-page">
@@ -109,18 +104,21 @@ function Services() {
         />
       )}
       {step === 'confirm' && bookingData.service && (
-        <ConfirmBooking
-          bookingData={bookingData}
-          onConfirm={handleConfirmBooking}
-          onGoBack={handleGoBack}
-        />
+        <>
+          {bookingError && <p style={{ color: 'red', padding: '1rem' }}>{bookingError}</p>}
+          <ConfirmBooking
+            bookingData={bookingData}
+            onConfirm={handleConfirmBooking}
+            onGoBack={handleGoBack}
+          />
+        </>
       )}
       {step === 'confirmed' && bookingData.service && (
         <BookingConfirmed
           bookingData={bookingData}
           queueNumber={queueNumber}
-          onGoToDashboard={handleGoToDashboard}
-          onTrackQueue={handleTrackQueue}
+          onGoToDashboard={handleReset}
+          onTrackQueue={handleReset}
         />
       )}
     </div>
